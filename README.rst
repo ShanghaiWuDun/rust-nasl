@@ -30,7 +30,7 @@ Build
     sudo cp ./c/libnasl.a /usr/local/lib
     sudo cp ./c/libnasl.so /usr/local/lib
     sudo cp ./c/nasli /usr/local/bin
-    
+
     # Build Rust lib
     cargo build -p nasl-sys
-    
+

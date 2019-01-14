@@ -1,0 +1,18 @@
+[package]
+name = "nasl"
+version = "0.0.1"
+authors = ["luozijun <luozijun.assistant@gmail.com>"]
+edition = "2018"
+
+[workspace]
+members = [ "./nasl-sys" ]
+
+
+[dependencies]
+log = "0.4"
+
+
+[dev-dependencies]
+env_logger = "0.6.0"
+chrono = "0.4"
+ansi_term = "0.11"
