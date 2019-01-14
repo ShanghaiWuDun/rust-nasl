@@ -72,20 +72,19 @@ def build():
 
     cflags = get_cflags()
     clibs = get_libs()
-
+    
     configs = "-D OPENVASSD_CONF=\"\\\"./\\\"\""
+    configs += " -D GVM_PID_DIR=\"\\\"./\\\"\""
     configs += " -D OPENVAS_SYSCONF_DIR=\"\\\"./\\\"\""
     configs += " -D GVM_SYSCONF_DIR=\"\\\"./\\\"\""
     configs += " -D OPENVAS_NASL_VERSION=\"\\\"master\\\"\""
     configs += " -D OPENVASLIB_VERSION=\"\\\"master\\\"\""
-
+    
     objs = []
     for fname in FILES.split(" "):
         filename = fname.strip()
         if len(filename) > 0 and filename.endswith(".c"):
             objectname = filename[:-2] + ".o"
-            
-            
             cmd = "clang -fPIC %s %s -c %s -o %s" % (cflags, configs, filename, objectname,)
             print(cmd)
             subprocess.run(cmd, stdout=subprocess.PIPE, check=True, shell=True).stdout.decode("utf-8")
@@ -99,7 +98,6 @@ def build():
     print(cmd)
     subprocess.run(cmd, stdout=subprocess.PIPE, check=True, shell=True).stdout.decode("utf-8")
 
-    
     cmd = "clang -fPIC -I../base -I../util -I../misc -I../ ../libbase.so ../libutil.so ../libopenvas.so ../libnasl_misc.so"
     cmd += " %s %s %s -o ../nasl_cli" % (cflags, clibs, configs)
     print(cmd)
