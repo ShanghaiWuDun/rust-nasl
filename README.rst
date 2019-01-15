@@ -19,6 +19,12 @@ rust-nasl
         libpcap-dev uuid-dev libsnmp-dev libhiredis-dev \
         bison snmp nmap
 
+    # macOS
+    brew install libssh glib gio gnutls gpgme libgcrypt libksba 
+    brew install libpcap pcre pcre2 hiredis ossp-uuid uuid 
+    brew install net-snmp nmap
+    brew install bison clang make cmake pkg-config
+
 
 Build
 --------
@@ -33,4 +39,3 @@ Build
 
     # Build Rust lib
     cargo build -p nasl-sys
-
