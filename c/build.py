@@ -23,7 +23,7 @@ def get_cflags():
         cflag = subprocess.run(cmd, stdout=subprocess.PIPE, check=True, shell=True).stdout.decode("utf-8")
         cflags.append(cflag.replace("\n", ""))
 
-    return " ".join(cflags)
+    return " ".join(cflags) + " -I./"
 
 def get_libs():
     clibs = []
@@ -68,14 +68,17 @@ def build():
 
     cflags = get_cflags()
     clibs = get_libs()
-    
+
+    # HAVE_LIBKSBA  nasl_cert.c
+    # HAVE_NETSNMP  nasl_snmp.c
     configs = "-D OPENVASSD_CONF=\"\\\"./\\\"\""
     configs += " -D GVM_PID_DIR=\"\\\"./\\\"\""
     configs += " -D OPENVAS_SYSCONF_DIR=\"\\\"./\\\"\""
     configs += " -D GVM_SYSCONF_DIR=\"\\\"./\\\"\""
-    configs += " -D OPENVAS_NASL_VERSION=\"\\\"master\\\"\""
-    configs += " -D OPENVASLIB_VERSION=\"\\\"master\\\"\""
+    configs += " -D OPENVAS_NASL_VERSION=\"\\\"5.06\\\"\""
+    configs += " -D OPENVASLIB_VERSION=\"\\\"5.06\\\"\""
     
+    c_files = set()
     objs = set()
     headers = set()
 
@@ -86,20 +89,25 @@ def build():
             
             if "nasl-lint.c" in filename:
                 continue
+            if "nasl.c" in filename:
+                continue
 
             if filename.endswith(".c"):
                 objectname = filename[:-2] + ".o"
                 if not os.path.exists(objectname):
-                    # -fPIC
                     cmd = "clang -fPIC %s %s -c %s -o %s" % (cflags, configs, filename, objectname,)
                     print(cmd)
                     subprocess.run(cmd, stdout=subprocess.PIPE, check=True, shell=True).stdout.decode("utf-8")
                 objs.add(objectname)
+                c_files.add(filename)
             elif filename.endswith(".h"):
                 headers.add(filename)
+            elif filename.endswith(".gch"):
+                os.remove(filename)
 
     objs = list(objs)
     headers = list(headers)
+    c_files = list(c_files)
 
     header_wrap = ""
     for h in headers:
@@ -124,32 +132,17 @@ def build():
     # -lssh -lm -lz \
     # libabc.a -o abc
     
-    static_libs = [
-        # "/usr/lib/x86_64-linux-gnu/libglib-2.0.a",
-        # "/usr/lib/x86_64-linux-gnu/libgio-2.0.a",
-        # "-lglib-2.0 -l gio-2.0",
-        # "/usr/lib/x86_64-linux-gnu/libgnutls.a",
-        "/usr/lib/x86_64-linux-gnu/libksba.a",
-        "/usr/lib/x86_64-linux-gnu/libassuan.a",
-        # "/usr/lib/x86_64-linux-gnu/libgpg-error.a",
-        # "/usr/lib/x86_64-linux-gnu/libgpgme.a",
-        # "/usr/lib/x86_64-linux-gnu/libgcrypt.a",
-        "/usr/lib/x86_64-linux-gnu/libhiredis.a",
-        # "/usr/lib/x86_64-linux-gnu/libuuid.a",
-        # "/usr/lib/x86_64-linux-gnu/libpcap.a",
-        "/usr/lib/x86_64-linux-gnu/libssh.a",
-        # "/usr/lib/x86_64-linux-gnu/libm.a",
-        # "/usr/lib/x86_64-linux-gnu/libz.a",
-    ]
-    
-
-    cmd = "clang -shared -fPIC %s %s %s -o libnasl.so" % ( cflags, clibs, " ".join(objs))
-    # cmd = "clang -shared -fPIC %s %s libnasl.a -o libnasl.so" % ( cflags, clibs,)
-    # cmd = "clang -fPIC -shared %s %s %s -o libnasl.so" % ( " ".join(objs), " ".join(static_libs), clibs)
+    if sys.platform == "darwin":
+        cmd = "clang -fPIC %s %s %s libnasl.a nasl/nasl.c -o nasli" % ( cflags, clibs, configs, )
+    elif sys.platform == "linux":
+        cmd = "clang -fPIC %s %s %s %s nasl/nasl.c -o nasli" % ( cflags, clibs, configs, " ".join(objs), )
     print(cmd)
     subprocess.run(cmd, stdout=subprocess.PIPE, check=True, shell=True).stdout.decode("utf-8")
 
-    cmd = "clang -fPIC %s %s libnasl.a -o nasli" % ( cflags, clibs, )
+    if sys.platform == "darwin":
+        cmd = "clang -shared -fPIC %s %s %s libnasl.a nasl/nasl.c -o libnasl.dylib" % ( cflags, clibs, configs, )
+    elif sys.platform == "linux":
+        cmd = "clang -shared -fPIC %s %s %s %s nasl/nasl.c -o libnasl.so" % ( cflags, clibs, configs, " ".join(objs))
     print(cmd)
     subprocess.run(cmd, stdout=subprocess.PIPE, check=True, shell=True).stdout.decode("utf-8")
 
@@ -157,9 +150,14 @@ def build():
 def check():
     import ctypes
 
-    dll = ctypes.cdll.LoadLibrary("./libnasl.so")
+    if sys.platform == "darwin":
+        libname = "./libnasl.dylib"
+    elif sys.platform == "linux":
+        libname = "./libnasl.so"
+
+    dll = ctypes.cdll.LoadLibrary(libname)
     print("\n@Tests:")
-    print(dll.nasl_version())
+    print("nasl_version: ", dll.nasl_version())
     
 
 def main():
