@@ -38,10 +38,19 @@
 
 #include "nasl_lex_ctxt.h"
 
-#ifdef LINUX
+// #ifdef LINUX
+// #include <netinet/tcp.h>
+// #include <netinet/ip.h>
+// #endif
+
+#ifdef __UNIX__
 #include <netinet/tcp.h>
 #include <netinet/ip.h>
 #endif
+#if defined(__FreeBSD__) || defined(__APPLE__)
+#define s6_addr32 __u6_addr.__u6_addr32
+#endif
+
 #include <limits.h>
 #include <math.h>         /* for sqrt(), floor() */
 

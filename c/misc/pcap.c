@@ -448,11 +448,16 @@ getinterfaces (int *howmany)
     g_message
       ("getinterfaces: SIOCGIFCONF claims you have no network interfaces!");
 
-#ifndef __FreeBSD__
-  len = sizeof (struct ifmap);
+#if defined(__FreeBSD__) || defined(__APPLE__)
+    len = sizeof (struct sockaddr);
 #else
-  len = sizeof (struct sockaddr);
+    len = sizeof (struct ifmap);
 #endif
+// #ifndef __FreeBSD__
+//   len = sizeof (struct ifmap);
+// #else
+//   len = sizeof (struct sockaddr);
+// #endif
 
   for (bufp = buf; bufp && *bufp && (bufp < (buf + ifc.ifc_len));
        bufp += sizeof (ifr->ifr_name) + len)

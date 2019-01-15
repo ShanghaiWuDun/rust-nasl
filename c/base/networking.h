@@ -27,6 +27,11 @@
 
 #include <netdb.h>           /* for struct in6_addr */
 
+#if defined(__FreeBSD__) || defined(__APPLE__)
+#include <netinet/in.h>
+#define s6_addr32 __u6_addr.__u6_addr32
+#endif
+
 #include "array.h"           /* for array_t */
 
 /**

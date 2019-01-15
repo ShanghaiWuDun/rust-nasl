@@ -45,9 +45,14 @@
 #include <netinet/udp.h>
 
 #include <sys/param.h>
-#ifdef __FreeBSD__
+// #ifdef __FreeBSD__
+// #include <netinet/in.h>
+// #include <netinet/ip.h>
+// #endif
+#if defined(__FreeBSD__) || defined(__APPLE__)
 #include <netinet/in.h>
 #include <netinet/ip.h>
+#define s6_addr32 __u6_addr.__u6_addr32
 #endif
 
 #include <netinet/ip_icmp.h>

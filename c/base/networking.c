@@ -37,10 +37,10 @@
 #include <sys/socket.h> /* for AF_INET, AF_INET6, AF_UNSPEC, sockaddr_storage */
 #include <unistd.h>     /* for close */
 
-#ifdef __FreeBSD__
-#include <netinet/in.h>
-#define s6_addr32 __u6_addr.__u6_addr32
-#endif
+
+
+
+
 
  /* Global variables */
 

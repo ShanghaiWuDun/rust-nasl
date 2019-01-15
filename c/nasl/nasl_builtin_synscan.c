@@ -35,6 +35,9 @@
 #include <string.h>      /* for memcpy() */
 #include <netinet/tcp.h> /* for TH_SYN */
 #include <netinet/ip.h>
+#if defined(__FreeBSD__) || defined(__APPLE__)
+#define s6_addr32 __u6_addr.__u6_addr32
+#endif
 
 #include <gvm/base/logging.h>
 #include <gvm/base/prefs.h>    /* for prefs_get */

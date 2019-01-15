@@ -20,6 +20,9 @@
   * @file
   * Source of the standalone NASL interpreter of OpenVAS.
   */
+#ifdef __APPLE__
+#include <mach-o/dyld.h>
+#endif
 
 #include <errno.h>              /* for errno */
 #include <signal.h>             /* for SIGINT */
