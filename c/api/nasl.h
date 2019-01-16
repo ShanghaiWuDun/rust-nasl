@@ -312,6 +312,31 @@ int init_nasl_ctx (naslctxt *, const char *);
 void nasl_clean_ctx (naslctxt *);
 
 
+struct scan_globals {
+  char *network_targets;
+  char *network_scan_status;
+  GHashTable *files_translation;
+  GHashTable *files_size_translation;
+  int global_socket;
+  char *scan_id;
+};
+
+struct host_info;
+
+struct script_infos {
+  struct scan_globals *globals;
+  kb_t key;
+  nvti_t *nvti;
+  char *oid;
+  char *name;
+  GHashTable *udp_data;
+  struct in6_addr *ip;
+  GSList *vhosts;
+  int standalone;
+  int denial_port;
+  int alive;
+};
+
 
 tree_cell *script_timeout (lex_ctxt *);
 tree_cell *script_oid (lex_ctxt *);
