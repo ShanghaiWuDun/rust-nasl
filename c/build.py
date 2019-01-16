@@ -3,6 +3,7 @@
 
 import os
 import sys
+import argparse
 import subprocess
 
 
@@ -71,6 +72,7 @@ def build():
 
     # HAVE_LIBKSBA  nasl_cert.c
     # HAVE_NETSNMP  nasl_snmp.c
+    # NASL_DEBUG
     configs = "-D OPENVASSD_CONF=\"\\\"./\\\"\""
     configs += " -D GVM_PID_DIR=\"\\\"./\\\"\""
     configs += " -D OPENVAS_SYSCONF_DIR=\"\\\"./\\\"\""
@@ -102,8 +104,6 @@ def build():
                 c_files.add(filename)
             elif filename.endswith(".h"):
                 headers.add(filename)
-            elif filename.endswith(".gch"):
-                os.remove(filename)
 
     objs = list(objs)
     headers = list(headers)
@@ -114,23 +114,9 @@ def build():
         header_wrap += "#include \"%s\"\n" % h
     open("libnasl.h", "w").write(header_wrap)
 
-
     cmd = "ar -rcsv libnasl.a %s" % " ".join(objs)
     print(cmd)
     subprocess.run(cmd, stdout=subprocess.PIPE, check=True, shell=True).stdout.decode("utf-8")
-    
-    # clang -fPIC -static \
-    # `pkg-config --libs glib-2.0` \
-    # `pkg-config --libs gio-2.0` \
-    # `pkg-config --libs gnutls` \
-    # `ksba-config --libs` \
-    # `gpgme-config --libs` \
-    # `libgcrypt-config --libs` \
-    # `pkg-config --libs hiredis` \
-    # `pkg-config --libs uuid` \
-    # `pcap-config --libs` \
-    # -lssh -lm -lz \
-    # libabc.a -o abc
     
     if sys.platform == "darwin":
         cmd = "clang -fPIC %s %s %s libnasl.a nasl/nasl.c -o nasli" % ( cflags, clibs, configs, )
@@ -160,10 +146,39 @@ def check():
     print("nasl_version: ", dll.nasl_version())
     
 
-def main():
-    build()
-    check()
+def clear():
+    for project in ("base", "util", "misc", "nasl"):
+        files = os.listdir(project)
+        for filename in files:
+            filename = "%s/%s" % ( project, filename )
 
+            if filename.endswith(".o") or filename.endswith(".gch"):
+                os.remove(filename)
+
+    os.remove("./nasli")
+    os.remove("./libnasl.h")
+    os.remove("./libnasl.a")
+
+    if sys.platform == "darwin":
+        os.remove("./libnasl.dylib")
+    elif sys.platform == "linux":
+        os.remove("./libnasl.so")
+
+
+def main():
+    parser = argparse.ArgumentParser(description='build script')
+    parser.add_argument('mode', type=str, help="enum('build', 'clear')")
+
+    args = parser.parse_args()
+
+    if args.mode == "build":
+        build()
+        check()
+    elif args.mode == "clear":
+        try:
+            clear()
+        except:
+            pass
 
 if __name__ == '__main__':
     main()
