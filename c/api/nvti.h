@@ -134,14 +134,10 @@ int nvti_add_pref (nvti_t *, nvtpref_t *);
  */
 typedef GHashTable nvtis_t;
 
-nvtis_t *
-nvtis_new (void);
+nvtis_t *nvtis_new (void);
+nvti_t *nvtis_lookup (nvtis_t *, const char *);
 
-void
-nvtis_free (nvtis_t *);
+void nvtis_free (nvtis_t *);
+void nvtis_add (nvtis_t *, nvti_t *);
 
-void
-nvtis_add (nvtis_t *, nvti_t *);
 
-nvti_t *
-nvtis_lookup (nvtis_t *, const char *);
