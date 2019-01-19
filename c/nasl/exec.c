@@ -58,7 +58,7 @@
 /**
  * @brief GLib logging domain.
  */
-#define G_LOG_DOMAIN "lib  nasl"
+#define G_LOG_DOMAIN "lib  nasl exec"
 
 extern int naslparse (naslctxt *);
 
@@ -1834,7 +1834,6 @@ exec_nasl_script (struct script_infos *script_infos, int mode)
 #if NASL_DEBUG > 3
   nasl_dump_tree (ctx.tree);
 #endif
-
   if (g_chdir (old_dir) != 0)
     {
       g_free (old_dir);

@@ -155,8 +155,7 @@ kb_get_port_state_proto (kb_t kb, int portnum, char *proto)
   char port_s[255], *kbstr;
   const char *prange = prefs_get ("port_range");
   port_protocol_t port_type;
-  array_t *port_ranges;
-
+  
   if (!proto)
     proto = "tcp";
   if (!strcmp (proto, "udp"))
@@ -174,16 +173,20 @@ kb_get_port_state_proto (kb_t kb, int portnum, char *proto)
   if (kb_item_get_int (kb, kbstr) <= 0)
     return unscanned_ports_as_closed (port_type);
 
-  port_ranges = port_range_ranges (prange);
-  if (!port_in_port_ranges (portnum, port_type, port_ranges))
-    {
-      array_free (port_ranges);
-      return unscanned_ports_as_closed (port_type);
-    }
-  array_free (port_ranges);
+  // NOTE: 不再需要 OpenVAS NASL 来关心端口状态。
+  // array_t *port_ranges;
+  // port_ranges = port_range_ranges (prange);
+  // if (!port_in_port_ranges (portnum, port_type, port_ranges))
+  //   {
+  //     // g_warning("port not in port_ranges.");
+  //     array_free (port_ranges);
+  //     // return unscanned_ports_as_closed (port_type);
+  //   }
+  // array_free (port_ranges);
 
   /* Ok, we scanned it. What is its state ? */
   snprintf (port_s, sizeof (port_s), "Ports/%s/%d", proto, portnum);
+  g_message("get kb item by key: %s", port_s);
   return kb_item_get_int (kb, port_s) > 0;
 }
 

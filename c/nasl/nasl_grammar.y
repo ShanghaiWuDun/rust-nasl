@@ -775,6 +775,10 @@ init_nasl_ctx(naslctxt* pc, const char* name)
     g_free(full_name);
     return -1;
   }
+    
+    // 关闭验证码检查
+    g_free(full_name);
+    return 0;
 
   if (pc->always_signed)
     {

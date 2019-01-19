@@ -100,7 +100,8 @@ static nvti_t *
 parse_script_infos (struct script_infos *infos)
 {
   nvti_t *nvti;
-  int mode = NASL_EXEC_DESCR | NASL_ALWAYS_SIGNED;
+  // int mode = NASL_EXEC_DESCR | NASL_ALWAYS_SIGNED;
+  int mode = NASL_EXEC_DESCR;
 
   nvti = nvti_new ();
   infos->nvti = nvti;
@@ -252,8 +253,8 @@ main (int argc, char **argv)
   if (nasl_debug)
     global_nasl_debug = 1;
   mode |= NASL_COMMAND_LINE;
-  if (signing_mode)
-    mode |= NASL_ALWAYS_SIGNED;
+  // if (signing_mode)
+    // mode |= NASL_ALWAYS_SIGNED;
   if (description_only)
     mode |= NASL_EXEC_DESCR;
   if (do_lint)
@@ -389,25 +390,26 @@ main (int argc, char **argv)
                 }
             }
 
-          if ((pid = fork ()) == 0)
-            {
-              if (exec_nasl_script (script_infos, mode) < 0)
-                exit (1);
-              else
-                exit (0);
-            }
-          else if (pid < 0)
-            {
-              fprintf (stderr, "fork(): %s\n", strerror (errno));
-              exit (1);
-            }
-          else
-            {
-              int status;
-              waitpid (pid, &status, 0);
-              if (status)
-                err++;
-            }
+          // if ((pid = fork ()) == 0) {
+              int ret_code = exec_nasl_script (script_infos, mode);
+              // if () {
+              //   // fprintf(stdout, "Ooops ...\n");
+              //   printf("Ooops ...\n");
+              //   exit (1);
+              // } else {
+              //   // fprintf(stdout, "done ...\n");
+              //   printf("Done ...\n");
+              //   exit (0);
+              // }
+          // } else if (pid < 0) {
+          //     fprintf (stderr, "fork(): %s\n", strerror (errno));
+          //     exit (1);
+          // } else {
+          //     int status;
+          //     waitpid (pid, &status, 0);
+          //     if (status)
+          //       err++;
+          // }
           i++;
         }
       kb_delete (kb);
