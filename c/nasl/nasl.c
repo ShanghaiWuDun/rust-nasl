@@ -390,26 +390,22 @@ main (int argc, char **argv)
                 }
             }
 
-          // if ((pid = fork ()) == 0) {
-              int ret_code = exec_nasl_script (script_infos, mode);
-              // if () {
-              //   // fprintf(stdout, "Ooops ...\n");
-              //   printf("Ooops ...\n");
-              //   exit (1);
-              // } else {
-              //   // fprintf(stdout, "done ...\n");
-              //   printf("Done ...\n");
-              //   exit (0);
-              // }
-          // } else if (pid < 0) {
-          //     fprintf (stderr, "fork(): %s\n", strerror (errno));
-          //     exit (1);
-          // } else {
-          //     int status;
-          //     waitpid (pid, &status, 0);
-          //     if (status)
-          //       err++;
-          // }
+          if ((pid = fork ()) == 0) {
+            if (exec_nasl_script (script_infos, mode) < 0) {
+              exit (1);
+            } else {
+              exit (0);
+            }
+          } else if (pid < 0) {
+            fprintf (stderr, "fork(): %s\n", strerror (errno));
+            exit (1);
+          } else {
+            int status;
+            waitpid (pid, &status, 0);
+            if (status) {
+              err++;
+            }
+          }
           i++;
         }
       kb_delete (kb);

@@ -183,10 +183,10 @@ kb_get_port_state_proto (kb_t kb, int portnum, char *proto)
   //     // return unscanned_ports_as_closed (port_type);
   //   }
   // array_free (port_ranges);
-
+  
   /* Ok, we scanned it. What is its state ? */
   snprintf (port_s, sizeof (port_s), "Ports/%s/%d", proto, portnum);
-  g_message("get kb item by key: %s", port_s);
+  // g_message("get kb item by key: %s", port_s);
   return kb_item_get_int (kb, port_s) > 0;
 }
 
