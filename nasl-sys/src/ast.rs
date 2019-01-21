@@ -1,9 +1,9 @@
 use crate::{ __BindgenBitfieldUnit, __IncompleteArrayField, };
+use crate::{ gchar, gint, guint, };
 use crate::kb::kb_t;
 use crate::nvti::nvti_t;
-
-use crate::libc::{ c_void, c_char, c_uchar, c_int, c_uint, c_short, c_long, in6_addr, };
-use crate::glib_sys::{ GHashTable, GSList, };
+use crate::libc::{ c_void, c_char, c_uchar, c_int, c_uint, c_short, c_long, in6_addr, in_addr, };
+use crate::glib_sys::{ GHashTable, GList, GSList, };
 
 
 pub type node_type = c_uint;
@@ -74,6 +74,19 @@ pub const REF_VAR: node_type = 62;
 pub const REF_ARRAY: node_type = 63;
 pub const DYN_ARRAY: node_type = 64;
 
+
+// exec_nasl_script modes
+pub const NASL_EXEC_DESCR: c_int      = 1 << 0;
+pub const NASL_EXEC_PARSE_ONLY: c_int = 1 << 1;
+pub const NASL_ALWAYS_SIGNED: c_int   = 1 << 2;
+pub const NASL_COMMAND_LINE: c_int    = 1 << 3;
+pub const NASL_LINT: c_int            = 1 << 4;
+
+pub const NASL_ERR_NOERR: c_int      = 0;
+pub const NASL_ERR_ETIMEDOUT: c_int  = 1;
+pub const NASL_ERR_ECONNRESET: c_int = 2;
+pub const NASL_ERR_EUNREACH: c_int   = 3;
+pub const NASL_ERR_EUNKNOWN: c_int   = 99;
 
 
 #[repr(C)]
@@ -290,6 +303,7 @@ pub struct scan_globals {
 pub struct host_info {
     _unused: [u8; 0],
 }
+
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct script_infos {
@@ -789,6 +803,73 @@ extern {
     pub fn nasl_stridx(arg1: *mut lex_ctxt) -> *mut tree_cell;
     pub fn nasl_str_replace(arg1: *mut lex_ctxt) -> *mut tree_cell;
 
-
+    // NOTE: 补漏
     pub fn nasl_version() -> *const std::os::raw::c_char;
+    pub fn add_nasl_inc_dir (include_dir: *const c_char) -> c_int;
+    pub fn nasl_clean_inc();
+    pub fn parse_script_infos(infos: *mut script_infos) -> *mut nvti_t;
+    pub fn exec_nasl_script(infos: *mut script_infos, mode: c_int) -> c_int;
+
+    pub fn gcrypt_init();
+    pub fn openvas_SSL_init() -> c_int;
+
+    pub fn init(ip: *mut in6_addr, vhosts: *mut GSList, kb: kb_t) -> *mut script_infos;
+    pub fn nvti_category_is_safe(category: c_int);
+
+    pub fn gvm_hosts_new(hosts_str: *const gchar) -> *mut gvm_hosts_t;
+    pub fn gvm_hosts_resolve(hosts: *mut gvm_hosts_t);
+    pub fn gvm_hosts_next(hosts: *mut gvm_hosts_t) -> *const gvm_host_t;
+    pub fn gvm_host_get_addr6(host: *const gvm_host_t, ip6: *mut in6_addr);
 }
+
+
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub enum host_type {
+    HOST_TYPE_NAME = 0,       /* Hostname eg. foo */
+    HOST_TYPE_IPV4,           /* eg. 192.168.1.1 */
+    HOST_TYPE_CIDR_BLOCK,     /* eg. 192.168.15.0/24 */
+    HOST_TYPE_RANGE_SHORT,    /* eg. 192.168.15.10-20 */
+    HOST_TYPE_RANGE_LONG,     /* eg. 192.168.15.10-192.168.18.3 */
+    HOST_TYPE_IPV6,           /* eg. ::1 */
+    HOST_TYPE_CIDR6_BLOCK,    /* eg. ::ffee/120 */
+    HOST_TYPE_RANGE6_LONG,    /* eg. ::1:200:7-::1:205:500 */
+    HOST_TYPE_RANGE6_SHORT,   /* eg. ::1-fe10 */
+    HOST_TYPE_MAX             /* Boundary checking. */
+}
+
+/// @brief The structure for a single host object.
+/// 
+/// The elements of this structure should never be accessed directly.
+/// Only the functions corresponding to this module should be used.
+#[repr(C)]
+pub struct gvm_host {
+    pub unamed_u: gvm_host_u,
+    pub type_: host_type,
+    pub vhosts: *mut GSList,
+}
+
+#[repr(C)]
+pub union gvm_host_u {
+    pub name: *mut gchar,
+    pub addr: in_addr,
+    pub addr6: in6_addr,
+}
+
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct gvm_hosts {
+    /// Original hosts definition string.
+    pub orig_str: gchar,
+    /// Hosts objects list.
+    pub hosts: *mut GList,
+    /// Current host object in iteration.
+    pub current: *mut GList,
+    /// Number of single host objects in hosts list.
+    pub count: c_uint,
+    /// Number of duplicate/excluded values.
+    pub removed: c_uint,
+}
+
+pub type gvm_hosts_t = gvm_hosts;
+pub type gvm_host_t  = gvm_host;

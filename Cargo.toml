@@ -10,9 +10,12 @@ members = [ "./nasl-sys" ]
 
 [dependencies]
 log = "0.4"
+env_logger = "0.6.0"
 
+libc = "^0.2"
+nasl-sys = { path = "./nasl-sys" }
 
 [dev-dependencies]
-env_logger = "0.6.0"
+
 chrono = "0.4"
 ansi_term = "0.11"

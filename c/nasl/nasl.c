@@ -58,7 +58,7 @@
 #define G_LOG_DOMAIN "lib  nasl"
 
 extern char *nasl_version (void);
-
+extern FILE *nasl_trace_fp;
 
 void
 sighandler ()
@@ -66,7 +66,7 @@ sighandler ()
   exit (0);
 }
 
-static void
+void
 my_gnutls_log_func (int level, const char *text)
 {
   fprintf (stderr, "[%d] (%d) %s", getpid (), level, text);
@@ -94,9 +94,9 @@ init (struct in6_addr *ip, GSList *vhosts, kb_t kb)
   return infos;
 }
 
-extern FILE *nasl_trace_fp;
 
-static nvti_t *
+
+nvti_t *
 parse_script_infos (struct script_infos *infos)
 {
   nvti_t *nvti;
@@ -124,7 +124,7 @@ parse_script_infos (struct script_infos *infos)
  *
  * @return 0 if category is unsafe, 1 otherwise.
  */
-static int
+int
 nvti_category_is_safe (int category)
 {
   if (category == ACT_DESTRUCTIVE_ATTACK || category == ACT_KILL_HOST
@@ -136,7 +136,7 @@ nvti_category_is_safe (int category)
 /**
  * @brief Initialize Gcrypt.
  */
-static void
+void
 gcrypt_init ()
 {
   if (gcry_control (GCRYCTL_ANY_INITIALIZATION_P))
