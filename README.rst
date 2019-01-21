@@ -49,6 +49,7 @@ Run
     cargo build
 
     redis-server ./c/redis_2_4.conf
+    redis-cli -s "/tmp/redis.sock" monitor
     
     cargo run -- --include_dir ../openvas-data/nvt-feed/ --mode exec helloworld.nasl 127.0.0.1
-    
+
