@@ -170,8 +170,8 @@ kb_get_port_state_proto (kb_t kb, int portnum, char *proto)
     }
 
   /* Check that we actually scanned the port */
-  if (kb_item_get_int (kb, kbstr) <= 0)
-    return unscanned_ports_as_closed (port_type);
+  // if (kb_item_get_int (kb, kbstr) <= 0)
+  //   return unscanned_ports_as_closed (port_type);
 
   // NOTE: 不再需要 OpenVAS NASL 来关心端口状态。
   // array_t *port_ranges;
@@ -185,9 +185,9 @@ kb_get_port_state_proto (kb_t kb, int portnum, char *proto)
   // array_free (port_ranges);
   
   /* Ok, we scanned it. What is its state ? */
-  snprintf (port_s, sizeof (port_s), "Ports/%s/%d", proto, portnum);
-  // g_message("get kb item by key: %s", port_s);
-  return kb_item_get_int (kb, port_s) > 0;
+  // snprintf (port_s, sizeof (port_s), "Ports/%s/%d", proto, portnum);
+  // return kb_item_get_int (kb, port_s) > 0;
+  return 1;
 }
 
 int
