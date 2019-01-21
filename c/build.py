@@ -50,11 +50,15 @@ def get_libs():
 def build_grammar():
     assert(os.path.exists("./nasl/nasl_grammar.y"))
 
+    need_update = os.path.getmtime("./nasl/nasl_grammar.y") > os.path.getmtime("./nasl/nasl_grammar.tab.c") \
+    or os.path.getmtime("./nasl/nasl_grammar.y") > os.path.getmtime("./nasl/nasl_grammar.tab.h") \
+    or os.path.getmtime("./nasl/nasl_grammar.y") > os.path.getmtime("./nasl/nasl_grammar.output")
+
     c_file = os.path.exists("./nasl/nasl_grammar.tab.c")
     c_header = os.path.exists("./nasl/nasl_grammar.tab.h")
     c_output = os.path.exists("./nasl/nasl_grammar.output")
 
-    if not c_file or not c_header or not c_output:
+    if need_update or (not c_file or not c_header or not c_output):
         cmd = "cd nasl && bison -d -v -t -p nasl ./nasl_grammar.y"
         print(cmd)
         subprocess.run(cmd, stdout=subprocess.PIPE, check=True, shell=True).stdout.decode("utf-8")
@@ -96,7 +100,8 @@ def build():
 
             if filename.endswith(".c"):
                 objectname = filename[:-2] + ".o"
-                if not os.path.exists(objectname):
+                need_update = os.path.getmtime(filename) > os.path.getmtime(objectname)
+                if not os.path.exists(objectname) or need_update:
                     cmd = "clang -fPIC %s %s -c %s -o %s" % (cflags, configs, filename, objectname,)
                     print(cmd)
                     subprocess.run(cmd, stdout=subprocess.PIPE, check=True, shell=True).stdout.decode("utf-8")
@@ -109,29 +114,31 @@ def build():
     headers = list(headers)
     c_files = list(c_files)
 
-    header_wrap = ""
-    for h in headers:
-        header_wrap += "#include \"%s\"\n" % h
-    open("libnasl.h", "w").write(header_wrap)
+    # header_wrap = ""
+    # for h in headers:
+    #     header_wrap += "#include \"%s\"\n" % h
+    # open("libnasl.h", "w").write(header_wrap)
 
-    cmd = "ar -rcsv libnasl.a %s" % " ".join(objs)
-    print(cmd)
-    subprocess.run(cmd, stdout=subprocess.PIPE, check=True, shell=True).stdout.decode("utf-8")
+    if not os.path.exists("./libnasl.a") or os.path.getmtime("./") > os.path.getmtime("./libnasl.a"):
+        cmd = "ar -rcsv libnasl.a %s" % " ".join(objs)
+        print(cmd)
+        subprocess.run(cmd, stdout=subprocess.PIPE, check=True, shell=True).stdout.decode("utf-8")
     
-    if sys.platform == "darwin":
-        cmd = "clang -fPIC %s %s %s libnasl.a nasl/nasl.c -o nasli" % ( cflags, clibs, configs, )
-    elif sys.platform == "linux":
-        cmd = "clang -fPIC %s %s %s %s nasl/nasl.c -o nasli" % ( cflags, clibs, configs, " ".join(objs), )
-    print(cmd)
-    subprocess.run(cmd, stdout=subprocess.PIPE, check=True, shell=True).stdout.decode("utf-8")
+    if not os.path.exists("./nasl_interpreter") or os.path.getmtime("./") > os.path.getmtime("./nasl_interpreter"):
+        if sys.platform == "darwin":
+            cmd = "clang -fPIC %s %s %s libnasl.a nasl/nasl.c -o nasl_interpreter" % ( cflags, clibs, configs, )
+        elif sys.platform == "linux":
+            cmd = "clang -fPIC %s %s %s %s nasl/nasl.c -o nasl_interpreter" % ( cflags, clibs, configs, " ".join(objs), )
+        print(cmd)
+        subprocess.run(cmd, stdout=subprocess.PIPE, check=True, shell=True).stdout.decode("utf-8")
 
-    if sys.platform == "darwin":
-        cmd = "clang -shared -fPIC %s %s %s libnasl.a nasl/nasl.c -o libnasl.dylib" % ( cflags, clibs, configs, )
-    elif sys.platform == "linux":
-        cmd = "clang -shared -fPIC %s %s %s %s nasl/nasl.c -o libnasl.so" % ( cflags, clibs, configs, " ".join(objs))
-    print(cmd)
-    subprocess.run(cmd, stdout=subprocess.PIPE, check=True, shell=True).stdout.decode("utf-8")
-
+    if not os.path.exists("./libnasl.dylib") or os.path.getmtime("./") > os.path.getmtime("./libnasl.dylib"):
+        if sys.platform == "darwin":
+            cmd = "clang -shared -fPIC %s %s %s libnasl.a nasl/nasl.c -o libnasl.dylib" % ( cflags, clibs, configs, )
+        elif sys.platform == "linux":
+            cmd = "clang -shared -fPIC %s %s %s %s nasl/nasl.c -o libnasl.so" % ( cflags, clibs, configs, " ".join(objs))
+        print(cmd)
+        subprocess.run(cmd, stdout=subprocess.PIPE, check=True, shell=True).stdout.decode("utf-8")
 
 def check():
     import ctypes
@@ -144,7 +151,22 @@ def check():
     dll = ctypes.cdll.LoadLibrary(libname)
     print("\n@Tests:")
     print("nasl_version: ", dll.nasl_version())
+
+
+def install():
+    assert(os.path.exists("./libnasl.a"))
     
+    if sys.platform == "darwin":
+        assert(os.path.exists("./libnasl.dylib"))
+    elif sys.platform == "linux":
+        assert(os.path.exists("./libnasl.so"))
+
+    assert(os.path.exists("./nasl_interpreter"))
+    
+    os.system("sudo cp ./libnasl.dylib /usr/local/lib")
+    os.system("sudo cp ./libnasl.a /usr/local/lib")
+    os.system("sudo cp ./nasl_interpreter /usr/local/bin")
+
 
 def clear():
     for project in ("base", "util", "misc", "nasl"):
@@ -155,9 +177,18 @@ def clear():
             if filename.endswith(".o") or filename.endswith(".gch"):
                 os.remove(filename)
 
-    os.remove("./nasli")
-    os.remove("./libnasl.h")
-    os.remove("./libnasl.a")
+    try:
+        os.remove("./nasl_interpreter")
+    except:
+        pass
+    try:
+        os.remove("./libnasl.h")
+    except:
+        pass
+    try:
+        os.remove("./libnasl.a")
+    except:
+        pass
 
     if sys.platform == "darwin":
         os.remove("./libnasl.dylib")
@@ -173,12 +204,15 @@ def main():
 
     if args.mode == "build":
         build()
-        check()
     elif args.mode == "clear":
         try:
             clear()
         except:
             pass
+    elif args.mode == "test":
+        check()
+    elif args.mode == "install":
+        install()
 
 if __name__ == '__main__':
     main()
