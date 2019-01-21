@@ -32,10 +32,23 @@ Build
 .. code:: bash
     
     cd c;
-    python3 build.py
-    sudo cp ./c/libnasl.a /usr/local/lib
-    sudo cp ./c/libnasl.so /usr/local/lib
-    sudo cp ./c/nasli /usr/local/bin
+    python3 build.py build
+    python3 build.py test
+    python3 build.py install
 
-    # Build Rust lib
+    cd ../;
     cargo build -p nasl-sys
+    cargo build
+
+
+Run
+--------
+
+.. code:: bash
+    
+    cargo build
+
+    redis-server ./c/redis_2_4.conf
+    
+    cargo run -- --include_dir ../openvas-data/nvt-feed/ --mode exec helloworld.nasl 127.0.0.1
+    
