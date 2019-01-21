@@ -1,10 +1,12 @@
 use crate::{ __BindgenBitfieldUnit, __IncompleteArrayField, };
-use crate::glib_sys::{ GHashTable, GSList, };
-use crate::libc::in6_addr;
-use crate::nvti::nvti_t;
 use crate::kb::kb_t;
+use crate::nvti::nvti_t;
 
-pub type node_type = ::std::os::raw::c_uint;
+use crate::libc::{ c_void, c_char, c_uchar, c_int, c_uint, c_short, c_long, in6_addr, };
+use crate::glib_sys::{ GHashTable, GSList, };
+
+
+pub type node_type = c_uint;
 
 pub const NODE_EMPTY: node_type = 0;
 pub const NODE_IF_ELSE: node_type = 1;
@@ -77,10 +79,10 @@ pub const DYN_ARRAY: node_type = 64;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct TC {
-    pub type_: ::std::os::raw::c_short,
-    pub line_nb: ::std::os::raw::c_short,
-    pub ref_count: ::std::os::raw::c_short,
-    pub size: ::std::os::raw::c_int,
+    pub type_: c_short,
+    pub line_nb: c_short,
+    pub ref_count: c_short,
+    pub size: c_int,
     pub x: TC__bindgen_ty_1,
     pub link: [*mut TC; 4usize],
 }
@@ -90,17 +92,17 @@ pub type tree_cell = TC;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union TC__bindgen_ty_1 {
-    pub str_val: *mut ::std::os::raw::c_char,
-    pub i_val: ::std::os::raw::c_long,
-    pub ref_val: *mut ::std::os::raw::c_void,
+    pub str_val: *mut c_char,
+    pub i_val: c_long,
+    pub ref_val: *mut c_void,
     _bindgen_union_align: u64,
 }
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct st_nasl_string {
-    pub s_val: *mut ::std::os::raw::c_uchar,
-    pub s_siz: ::std::os::raw::c_int,
+    pub s_val: *mut c_uchar,
+    pub s_siz: c_int,
 }
 
 pub type nasl_string_t = st_nasl_string;
@@ -108,7 +110,7 @@ pub type nasl_string_t = st_nasl_string;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct st_nasl_array {
-    pub max_idx: ::std::os::raw::c_int,
+    pub max_idx: c_int,
     pub num_elt: *mut *mut st_a_nasl_var,
     pub hash_elt: *mut *mut st_n_nasl_var,
 }
@@ -122,53 +124,53 @@ pub struct struct_lex_ctxt {
     pub ret_val: *mut tree_cell,
     pub _bitfield_1: __BindgenBitfieldUnit<[u8; 1usize], u8>,
     pub script_infos: *mut script_infos,
-    pub oid: *const ::std::os::raw::c_char,
-    pub recv_timeout: ::std::os::raw::c_int,
-    pub line_nb: ::std::os::raw::c_int,
+    pub oid: *const c_char,
+    pub recv_timeout: c_int,
+    pub line_nb: c_int,
     pub ctx_vars: nasl_array,
     pub functions: *mut GHashTable,
 }
 
 impl struct_lex_ctxt {
     #[inline]
-    pub fn fct_ctxt(&self) -> ::std::os::raw::c_uint {
+    pub fn fct_ctxt(&self) -> c_uint {
         unsafe { ::std::mem::transmute(self._bitfield_1.get(0usize, 1u8) as u32) }
     }
     #[inline]
-    pub fn set_fct_ctxt(&mut self, val: ::std::os::raw::c_uint) {
+    pub fn set_fct_ctxt(&mut self, val: c_uint) {
         unsafe {
             let val: u32 = ::std::mem::transmute(val);
             self._bitfield_1.set(0usize, 1u8, val as u64)
         }
     }
     #[inline]
-    pub fn break_flag(&self) -> ::std::os::raw::c_uint {
+    pub fn break_flag(&self) -> c_uint {
         unsafe { ::std::mem::transmute(self._bitfield_1.get(1usize, 1u8) as u32) }
     }
     #[inline]
-    pub fn set_break_flag(&mut self, val: ::std::os::raw::c_uint) {
+    pub fn set_break_flag(&mut self, val: c_uint) {
         unsafe {
             let val: u32 = ::std::mem::transmute(val);
             self._bitfield_1.set(1usize, 1u8, val as u64)
         }
     }
     #[inline]
-    pub fn cont_flag(&self) -> ::std::os::raw::c_uint {
+    pub fn cont_flag(&self) -> c_uint {
         unsafe { ::std::mem::transmute(self._bitfield_1.get(2usize, 1u8) as u32) }
     }
     #[inline]
-    pub fn set_cont_flag(&mut self, val: ::std::os::raw::c_uint) {
+    pub fn set_cont_flag(&mut self, val: c_uint) {
         unsafe {
             let val: u32 = ::std::mem::transmute(val);
             self._bitfield_1.set(2usize, 1u8, val as u64)
         }
     }
     #[inline]
-    pub fn always_signed(&self) -> ::std::os::raw::c_uint {
+    pub fn always_signed(&self) -> c_uint {
         unsafe { ::std::mem::transmute(self._bitfield_1.get(3usize, 1u8) as u32) }
     }
     #[inline]
-    pub fn set_always_signed(&mut self, val: ::std::os::raw::c_uint) {
+    pub fn set_always_signed(&mut self, val: c_uint) {
         unsafe {
             let val: u32 = ::std::mem::transmute(val);
             self._bitfield_1.set(3usize, 1u8, val as u64)
@@ -176,10 +178,10 @@ impl struct_lex_ctxt {
     }
     #[inline]
     pub fn new_bitfield_1(
-        fct_ctxt: ::std::os::raw::c_uint,
-        break_flag: ::std::os::raw::c_uint,
-        cont_flag: ::std::os::raw::c_uint,
-        always_signed: ::std::os::raw::c_uint,
+        fct_ctxt: c_uint,
+        break_flag: c_uint,
+        cont_flag: c_uint,
+        always_signed: c_uint,
     ) -> __BindgenBitfieldUnit<[u8; 1usize], u8> {
         let mut __bindgen_bitfield_unit: __BindgenBitfieldUnit<[u8; 1usize], u8> =
             Default::default();
@@ -206,7 +208,7 @@ impl struct_lex_ctxt {
 pub type lex_ctxt = struct_lex_ctxt;
 
 
-pub type _bindgen_ty_2 = ::std::os::raw::c_uint;
+pub type _bindgen_ty_2 = c_uint;
 
 pub const VAR2_UNDEF: _bindgen_ty_2 = 0;
 pub const VAR2_INT: _bindgen_ty_2 = 1;
@@ -218,7 +220,7 @@ pub const VAR2_ARRAY: _bindgen_ty_2 = 4;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct st_a_nasl_var {
-    pub var_type: ::std::os::raw::c_int,
+    pub var_type: c_int,
     pub v: st_a_nasl_var__bindgen_ty_1,
 }
 
@@ -226,7 +228,7 @@ pub struct st_a_nasl_var {
 #[derive(Copy, Clone)]
 pub union st_a_nasl_var__bindgen_ty_1 {
     pub v_str: nasl_string_t,
-    pub v_int: ::std::os::raw::c_long,
+    pub v_int: c_long,
     pub v_arr: nasl_array,
     _bindgen_union_align: [u64; 3usize],
 }
@@ -237,7 +239,7 @@ pub type anon_nasl_var = st_a_nasl_var;
 #[derive(Copy, Clone)]
 pub struct st_n_nasl_var {
     pub u: st_a_nasl_var,
-    pub var_name: *mut ::std::os::raw::c_char,
+    pub var_name: *mut c_char,
     pub next_var: *mut st_n_nasl_var,
 }
 
@@ -247,16 +249,16 @@ pub type named_nasl_var = st_n_nasl_var;
 #[derive(Debug, Copy, Clone)]
 pub struct nasl_iterator {
     pub a: *mut nasl_array,
-    pub i1: ::std::os::raw::c_int,
-    pub iH: ::std::os::raw::c_int,
+    pub i1: c_int,
+    pub iH: c_int,
     pub v: *mut named_nasl_var,
 }
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct st_nasl_func {
-    pub func_name: *mut ::std::os::raw::c_char,
-    pub block: *mut ::std::os::raw::c_void,
+    pub func_name: *mut c_char,
+    pub block: *mut c_void,
 }
 
 pub type nasl_func = st_nasl_func;
@@ -264,23 +266,23 @@ pub type nasl_func = st_nasl_func;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct naslctxt {
-    pub line_nb: ::std::os::raw::c_int,
-    pub always_signed: ::std::os::raw::c_int,
-    pub index: ::std::os::raw::c_int,
+    pub line_nb: c_int,
+    pub always_signed: c_int,
+    pub index: c_int,
     pub tree: *mut tree_cell,
-    pub buffer: *mut ::std::os::raw::c_char,
+    pub buffer: *mut c_char,
     pub kb: kb_t,
 }
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct scan_globals {
-    pub network_targets: *mut ::std::os::raw::c_char,
-    pub network_scan_status: *mut ::std::os::raw::c_char,
+    pub network_targets: *mut c_char,
+    pub network_scan_status: *mut c_char,
     pub files_translation: *mut GHashTable,
     pub files_size_translation: *mut GHashTable,
-    pub global_socket: ::std::os::raw::c_int,
-    pub scan_id: *mut ::std::os::raw::c_char,
+    pub global_socket: c_int,
+    pub scan_id: *mut c_char,
 }
 
 #[repr(C)]
@@ -294,14 +296,14 @@ pub struct script_infos {
     pub globals: *mut scan_globals,
     pub key: kb_t,
     pub nvti: *mut nvti_t,
-    pub oid: *mut ::std::os::raw::c_char,
-    pub name: *mut ::std::os::raw::c_char,
+    pub oid: *mut c_char,
+    pub name: *mut c_char,
     pub udp_data: *mut GHashTable,
     pub ip: *mut in6_addr,
     pub vhosts: *mut GSList,
-    pub standalone: ::std::os::raw::c_int,
-    pub denial_port: ::std::os::raw::c_int,
-    pub alive: ::std::os::raw::c_int,
+    pub standalone: c_int,
+    pub denial_port: c_int,
+    pub alive: c_int,
 }
 
 
@@ -311,86 +313,86 @@ extern {
     pub fn init_nasl_library(arg1: *mut lex_ctxt);
     pub fn add_nasl_library(arg1: *mut *mut GSList);
     pub fn nasl_verify_signature(
-        arg1: *const ::std::os::raw::c_char,
-        arg2: *const ::std::os::raw::c_char,
+        arg1: *const c_char,
+        arg2: *const c_char,
         arg3: usize,
-    ) -> ::std::os::raw::c_int;
-    pub fn nasl_is_leaf(arg1: *const tree_cell) -> ::std::os::raw::c_int;
-    pub fn get_line_nb(arg1: *const tree_cell) -> *mut ::std::os::raw::c_char;
+    ) -> c_int;
+    pub fn nasl_is_leaf(arg1: *const tree_cell) -> c_int;
+    pub fn get_line_nb(arg1: *const tree_cell) -> *mut c_char;
     pub fn nasl_dump_tree(arg1: *const tree_cell);
     pub fn ref_cell(arg1: *mut tree_cell);
     pub fn deref_cell(arg1: *mut tree_cell);
-    pub fn nasl_type_name(arg1: ::std::os::raw::c_int) -> *const ::std::os::raw::c_char;
-    pub fn cell_type(arg1: *const tree_cell) -> ::std::os::raw::c_int;
-    pub fn dump_cell_val(arg1: *const tree_cell) -> *mut ::std::os::raw::c_char;
+    pub fn nasl_type_name(arg1: c_int) -> *const c_char;
+    pub fn cell_type(arg1: *const tree_cell) -> c_int;
+    pub fn dump_cell_val(arg1: *const tree_cell) -> *mut c_char;
     pub fn alloc_tree_cell() -> *mut tree_cell;
     pub fn alloc_expr_cell(
-        arg1: ::std::os::raw::c_int,
-        arg2: ::std::os::raw::c_int,
+        arg1: c_int,
+        arg2: c_int,
         arg3: *mut tree_cell,
         arg4: *mut tree_cell,
     ) -> *mut tree_cell;
     pub fn alloc_RE_cell(
-        arg1: ::std::os::raw::c_int,
-        arg2: ::std::os::raw::c_int,
+        arg1: c_int,
+        arg2: c_int,
         arg3: *mut tree_cell,
-        arg4: *mut ::std::os::raw::c_char,
+        arg4: *mut c_char,
     ) -> *mut tree_cell;
-    pub fn alloc_typed_cell(arg1: ::std::os::raw::c_int) -> *mut tree_cell;
+    pub fn alloc_typed_cell(arg1: c_int) -> *mut tree_cell;
     pub fn dup_cell(arg1: *const tree_cell) -> *mut tree_cell;
     pub fn nasl_affect(arg1: *mut tree_cell, arg2: *mut tree_cell) -> *mut tree_cell;
     pub fn clear_unnamed_var(arg1: *mut anon_nasl_var);
-    pub fn var2str(arg1: *const anon_nasl_var) -> *const ::std::os::raw::c_char;
+    pub fn var2str(arg1: *const anon_nasl_var) -> *const c_char;
     pub fn nasl_get_var_by_num(
-        arg1: *mut ::std::os::raw::c_void,
+        arg1: *mut c_void,
         arg2: *mut nasl_array,
-        arg3: ::std::os::raw::c_int,
-        arg4: ::std::os::raw::c_int,
+        arg3: c_int,
+        arg4: c_int,
     ) -> *mut anon_nasl_var;
     pub fn nasl_array_iterator(
-        arg1: *mut ::std::os::raw::c_void,
+        arg1: *mut c_void,
         arg2: *mut tree_cell,
     ) -> nasl_iterator;
     pub fn nasl_iterate_array(arg1: *mut nasl_iterator) -> *mut tree_cell;
     pub fn add_var_to_list(
         arg1: *mut nasl_array,
-        arg2: ::std::os::raw::c_int,
+        arg2: c_int,
         arg3: *const anon_nasl_var,
-    ) -> ::std::os::raw::c_int;
+    ) -> c_int;
     pub fn add_var_to_array(
         arg1: *mut nasl_array,
-        arg2: *mut ::std::os::raw::c_char,
+        arg2: *mut c_char,
         arg3: *const anon_nasl_var,
-    ) -> ::std::os::raw::c_int;
-    pub fn array_max_index(arg1: *mut nasl_array) -> ::std::os::raw::c_int;
+    ) -> c_int;
+    pub fn array_max_index(arg1: *mut nasl_array) -> c_int;
     pub fn free_array(arg1: *mut nasl_array);
     pub fn copy_ref_array(arg1: *const tree_cell) -> *mut tree_cell;
     pub fn hash_str2(
-        arg1: *const ::std::os::raw::c_char,
-        arg2: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
+        arg1: *const c_char,
+        arg2: c_int,
+    ) -> c_int;
     pub fn var2cell(arg1: *mut anon_nasl_var) -> *mut tree_cell;
     pub fn make_array_from_elems(arg1: *mut tree_cell) -> *mut tree_cell;
-    pub fn array2str(arg1: *const nasl_array) -> *mut ::std::os::raw::c_char;
-    pub fn func_is_internal(arg1: *const ::std::os::raw::c_char) -> *mut nasl_func;
+    pub fn array2str(arg1: *const nasl_array) -> *mut c_char;
+    pub fn func_is_internal(arg1: *const c_char) -> *mut nasl_func;
     pub fn free_func(arg1: *mut nasl_func);
     pub fn init_empty_lex_ctxt() -> *mut lex_ctxt;
     pub fn free_lex_ctxt(arg1: *mut lex_ctxt);
     pub fn dump_ctxt(arg1: *mut lex_ctxt);
     pub fn get_func_ref_by_name(
         arg1: *mut lex_ctxt,
-        arg2: *const ::std::os::raw::c_char,
+        arg2: *const c_char,
     ) -> *mut nasl_func;
     pub fn decl_nasl_func(
         arg1: *mut lex_ctxt,
         arg2: *mut tree_cell,
-        arg3: ::std::os::raw::c_int,
+        arg3: c_int,
     ) -> *mut tree_cell;
     pub fn insert_nasl_func(
         arg1: *mut lex_ctxt,
-        arg2: *const ::std::os::raw::c_char,
+        arg2: *const c_char,
         arg3: *mut tree_cell,
-        arg4: ::std::os::raw::c_int,
+        arg4: c_int,
     ) -> *mut nasl_func;
     pub fn nasl_func_call(
         arg1: *mut lex_ctxt,
@@ -399,29 +401,29 @@ extern {
     ) -> *mut tree_cell;
     pub fn get_variable_by_name(
         arg1: *mut lex_ctxt,
-        arg2: *const ::std::os::raw::c_char,
+        arg2: *const c_char,
     ) -> *mut tree_cell;
     pub fn get_array_elem(
         arg1: *mut lex_ctxt,
-        arg2: *const ::std::os::raw::c_char,
+        arg2: *const c_char,
         arg3: *mut tree_cell,
     ) -> *mut tree_cell;
     pub fn add_numbered_var_to_ctxt(
         arg1: *mut lex_ctxt,
-        arg2: ::std::os::raw::c_int,
+        arg2: c_int,
         arg3: *mut tree_cell,
     ) -> *mut anon_nasl_var;
     pub fn add_named_var_to_ctxt(
         arg1: *mut lex_ctxt,
-        arg2: *const ::std::os::raw::c_char,
+        arg2: *const c_char,
         arg3: *mut tree_cell,
     ) -> *mut named_nasl_var;
     pub fn nasl_read_var_ref(arg1: *mut lex_ctxt, arg2: *mut tree_cell) -> *mut tree_cell;
     pub fn nasl_incr_variable(
         arg1: *mut lex_ctxt,
         arg2: *mut tree_cell,
-        arg3: ::std::os::raw::c_int,
-        arg4: ::std::os::raw::c_int,
+        arg3: c_int,
+        arg4: c_int,
     ) -> *mut tree_cell;
     pub fn nasl_return(arg1: *mut lex_ctxt, arg2: *mut tree_cell) -> *mut tree_cell;
     pub fn decl_local_variables(arg1: *mut lex_ctxt, arg2: *mut tree_cell) -> *mut tree_cell;
@@ -429,46 +431,46 @@ extern {
     pub fn cell2atom(arg1: *mut lex_ctxt, arg2: *mut tree_cell) -> *mut tree_cell;
     pub fn get_int_var_by_num(
         arg1: *mut lex_ctxt,
-        arg2: ::std::os::raw::c_int,
-        arg3: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_long;
+        arg2: c_int,
+        arg3: c_int,
+    ) -> c_long;
     pub fn get_str_var_by_num(
         arg1: *mut lex_ctxt,
-        arg2: ::std::os::raw::c_int,
-    ) -> *mut ::std::os::raw::c_char;
+        arg2: c_int,
+    ) -> *mut c_char;
     pub fn get_int_var_by_name(
         arg1: *mut lex_ctxt,
-        arg2: *const ::std::os::raw::c_char,
-        arg3: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_long;
+        arg2: *const c_char,
+        arg3: c_int,
+    ) -> c_long;
     pub fn get_str_var_by_name(
         arg1: *mut lex_ctxt,
-        arg2: *const ::std::os::raw::c_char,
-    ) -> *mut ::std::os::raw::c_char;
+        arg2: *const c_char,
+    ) -> *mut c_char;
     pub fn get_var_size_by_name(
         arg1: *mut lex_ctxt,
-        arg2: *const ::std::os::raw::c_char,
-    ) -> ::std::os::raw::c_int;
+        arg2: *const c_char,
+    ) -> c_int;
     pub fn get_var_type_by_name(
         arg1: *mut lex_ctxt,
-        arg2: *const ::std::os::raw::c_char,
-    ) -> ::std::os::raw::c_int;
+        arg2: *const c_char,
+    ) -> c_int;
     pub fn get_var_size_by_num(
         arg1: *mut lex_ctxt,
-        arg2: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
+        arg2: c_int,
+    ) -> c_int;
     pub fn get_var_type_by_num(
         arg1: *mut lex_ctxt,
-        arg2: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
-    pub fn nasl_perror(arg1: *mut lex_ctxt, arg2: *mut ::std::os::raw::c_char, ...);
-    pub fn nasl_trace(arg1: *mut lex_ctxt, arg2: *mut ::std::os::raw::c_char, ...);
-    pub fn nasl_trace_enabled() -> ::std::os::raw::c_int;
-    pub fn nasl_set_filename(arg1: *const ::std::os::raw::c_char);
-    pub fn nasl_set_function_filename(arg1: *const ::std::os::raw::c_char);
-    pub fn nasl_get_filename(arg1: *const ::std::os::raw::c_char) -> *const ::std::os::raw::c_char;
-    pub fn nasl_set_function_name(arg1: *const ::std::os::raw::c_char);
-    pub fn nasl_get_function_name() -> *const ::std::os::raw::c_char;
+        arg2: c_int,
+    ) -> c_int;
+    pub fn nasl_perror(arg1: *mut lex_ctxt, arg2: *mut c_char, ...);
+    pub fn nasl_trace(arg1: *mut lex_ctxt, arg2: *mut c_char, ...);
+    pub fn nasl_trace_enabled() -> c_int;
+    pub fn nasl_set_filename(arg1: *const c_char);
+    pub fn nasl_set_function_filename(arg1: *const c_char);
+    pub fn nasl_get_filename(arg1: *const c_char) -> *const c_char;
+    pub fn nasl_set_function_name(arg1: *const c_char);
+    pub fn nasl_get_function_name() -> *const c_char;
     pub fn plugin_run_find_service(arg1: *mut lex_ctxt) -> *mut tree_cell;
     pub fn plugin_run_openvas_tcp_scanner(arg1: *mut lex_ctxt) -> *mut tree_cell;
     pub fn plugin_run_synscan(arg1: *mut lex_ctxt) -> *mut tree_cell;
@@ -478,11 +480,11 @@ extern {
         arg1: *mut lex_ctxt,
         arg2: *mut tree_cell,
         arg3: *mut tree_cell,
-    ) -> ::std::os::raw::c_long;
+    ) -> c_long;
     pub fn init_nasl_ctx(
         arg1: *mut naslctxt,
-        arg2: *const ::std::os::raw::c_char,
-    ) -> ::std::os::raw::c_int;
+        arg2: *const c_char,
+    ) -> c_int;
     pub fn nasl_clean_ctx(arg1: *mut naslctxt);
     pub fn script_timeout(arg1: *mut lex_ctxt) -> *mut tree_cell;
     pub fn script_oid(arg1: *mut lex_ctxt) -> *mut tree_cell;
@@ -521,7 +523,7 @@ extern {
     pub fn nasl_scanner_add_port(arg1: *mut lex_ctxt) -> *mut tree_cell;
     pub fn nasl_scanner_status(arg1: *mut lex_ctxt) -> *mut tree_cell;
     pub fn nasl_vendor_version(arg1: *mut lex_ctxt) -> *mut tree_cell;
-    pub fn generate_script_signature(arg1: *mut ::std::os::raw::c_char) -> ::std::os::raw::c_int;
+    pub fn generate_script_signature(arg1: *mut c_char) -> c_int;
     pub fn nasl_cert_open(lexic: *mut lex_ctxt) -> *mut tree_cell;
     pub fn nasl_cert_close(lexic: *mut lex_ctxt) -> *mut tree_cell;
     pub fn nasl_cert_query(lexic: *mut lex_ctxt) -> *mut tree_cell;
@@ -743,7 +745,7 @@ extern {
     pub fn nasl_open_sock_udp(arg1: *mut lex_ctxt) -> *mut tree_cell;
     pub fn nasl_open_sock_tcp_bufsz(
         arg1: *mut lex_ctxt,
-        arg2: ::std::os::raw::c_int,
+        arg2: c_int,
     ) -> *mut tree_cell;
     pub fn nasl_socket_get_error(arg1: *mut lex_ctxt) -> *mut tree_cell;
     pub fn nasl_open_priv_sock_tcp(arg1: *mut lex_ctxt) -> *mut tree_cell;
@@ -787,6 +789,6 @@ extern {
     pub fn nasl_stridx(arg1: *mut lex_ctxt) -> *mut tree_cell;
     pub fn nasl_str_replace(arg1: *mut lex_ctxt) -> *mut tree_cell;
 
-    
+
     pub fn nasl_version() -> *const std::os::raw::c_char;
 }
