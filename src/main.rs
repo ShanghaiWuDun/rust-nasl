@@ -108,7 +108,6 @@ impl Vm {
             }
 
             let mut script_infos = nasl_sys::init(&mut ip6, ptr::null_mut(), kb);
-            
             (*script_infos).name = c_str(script_name);
 
             let ret_code = nasl_sys::exec_nasl_script(script_infos, nasl_sys::NASL_COMMAND_LINE);
@@ -233,7 +232,7 @@ fn boot() {
 
     info!("Exec description ...");
     vm.description(filename).unwrap();
-    info!("attack ...");
+    info!("Attack ...");
     vm.attack(&target, filename).unwrap();
 }
 
