@@ -50,15 +50,19 @@ def get_libs():
 def build_grammar():
     assert(os.path.exists("./nasl/nasl_grammar.y"))
 
-    need_update = os.path.getmtime("./nasl/nasl_grammar.y") > os.path.getmtime("./nasl/nasl_grammar.tab.c") \
-    or os.path.getmtime("./nasl/nasl_grammar.y") > os.path.getmtime("./nasl/nasl_grammar.tab.h") \
-    or os.path.getmtime("./nasl/nasl_grammar.y") > os.path.getmtime("./nasl/nasl_grammar.output")
-
     c_file = os.path.exists("./nasl/nasl_grammar.tab.c")
     c_header = os.path.exists("./nasl/nasl_grammar.tab.h")
     c_output = os.path.exists("./nasl/nasl_grammar.output")
 
-    if need_update or (not c_file or not c_header or not c_output):
+    if not c_file or not c_header or not c_output:
+        need_update = True
+    else:
+        a = os.path.getmtime("./nasl/nasl_grammar.y") > os.path.getmtime("./nasl/nasl_grammar.tab.c")
+        b = os.path.getmtime("./nasl/nasl_grammar.y") > os.path.getmtime("./nasl/nasl_grammar.tab.h")
+        c = os.path.getmtime("./nasl/nasl_grammar.y") > os.path.getmtime("./nasl/nasl_grammar.output")
+        need_update = a or b or c
+    
+    if need_update:
         cmd = "cd nasl && bison -d -v -t -p nasl ./nasl_grammar.y"
         print(cmd)
         subprocess.run(cmd, stdout=subprocess.PIPE, check=True, shell=True).stdout.decode("utf-8")
