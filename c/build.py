@@ -104,8 +104,12 @@ def build():
 
             if filename.endswith(".c"):
                 objectname = filename[:-2] + ".o"
-                need_update = os.path.getmtime(filename) > os.path.getmtime(objectname)
-                if not os.path.exists(objectname) or need_update:
+                if not os.path.exists(objectname):
+                    need_update = True
+                else:
+                    need_update = os.path.getmtime(filename) > os.path.getmtime(objectname)
+                
+                if need_update:
                     cmd = "clang -fPIC %s %s -c %s -o %s" % (cflags, configs, filename, objectname,)
                     print(cmd)
                     subprocess.run(cmd, stdout=subprocess.PIPE, check=True, shell=True).stdout.decode("utf-8")
